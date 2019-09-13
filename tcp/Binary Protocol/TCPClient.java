@@ -9,7 +9,6 @@ package binary_tcp;
 
 import java.net.*;
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.util.Scanner;
 
 public class TCPClient {
