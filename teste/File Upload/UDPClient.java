@@ -1,3 +1,10 @@
+/*
+    Description: This is the class of the UDP Server for files upload. The idea is for the server get the header first, n-packages for the file and a checksum MD5.
+    Author: Vitor Bueno de Camargo
+    Created at: September, 14th. 2019
+    Updated at: September, 16th. 2019
+*/
+
 package upload_udp;
 
 import java.net.*;
@@ -96,7 +103,7 @@ public class UDPClient {
         return files;
     }
 
-    private static String calculateMD5(byte[] fileArray) {
+    private static String calculateMD5(byte[] fileArray) { // Calculate the MD5 Checksum for the file
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(fileArray);
@@ -111,7 +118,7 @@ public class UDPClient {
         }
     }
 
-    private static String bytesToHex(byte[] hashInBytes) {
+    private static String bytesToHex(byte[] hashInBytes) { // Transform the hash into a hex string
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < hashInBytes.length; i++) {
             sb.append(Integer.toString((hashInBytes[i] & 0xff) + 0x100, 16).substring(1));
