@@ -23,10 +23,10 @@ public class UDPServer {
 
         try {
             InetAddress serverAddr = InetAddress.getLocalHost();
-            System.out.println(args[0]);
+            System.out.println("myself: " + args[0]);
             dgramSocket = new DatagramSocket(dictionary.get(args[0]));
 
-            ReceiveThread r = new ReceiveThread(dgramSocket, serverAddr, dictionary);
+            ReceiveThread r = new ReceiveThread(dgramSocket);
             SendThread s = new SendThread(dgramSocket, serverAddr, dictionary, args[0]);
             /* initializes the thread */
             s.start();
@@ -42,12 +42,8 @@ public class UDPServer {
 class ReceiveThread extends Thread {
 
     DatagramSocket dgramSocketIn;
-    InetAddress adressIn;
-    Map<String,Integer> dictionaryIn;
-    public ReceiveThread(DatagramSocket dgramSocket, InetAddress adress, Map<String,Integer> dictionary) {
+    public ReceiveThread(DatagramSocket dgramSocket) {
         this.dgramSocketIn = dgramSocket;
-        this.adressIn = adress;
-        this.dictionaryIn = dictionary;
 
     } //construtor
     /* method performed when starting thread - start() */
@@ -97,12 +93,13 @@ class SendThread extends Thread {
             int tamMsg;
             String destino = "";
             int tamNick;
-            System.out.println("Send to: ");
+            System.out.print("Send to: ");
             destino = reader.nextLine();
+            System.out.println("connection established, send your message:");
             while (true) {
-                tamNick = nick.length();
+                tamNick = nick.getBytes().length;
                 msg = reader.nextLine();
-                tamMsg = msg.length();
+                tamMsg = msg.getBytes().length;
 
                 ByteArrayOutputStream sendMessage = new ByteArrayOutputStream();
 
