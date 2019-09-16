@@ -1,6 +1,6 @@
 /*
     Description: This is the class of the UDP Server for files upload. The idea is for the server get the header first, n-packages for the file and a checksum MD5.
-    Author: Vitor Bueno de Camargo
+    Author: Vitor Bueno de Camargo, Gabriel David Sacca
     Created at: September, 14th. 2019
     Updated at: September, 16th. 2019
 */

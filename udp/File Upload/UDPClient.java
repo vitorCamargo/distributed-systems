@@ -1,6 +1,6 @@
 /*
     Description: This is the class of the UDP Client for files upload. The idea is for the client send the header (with the length and name of the file) first, n-packages for the file content and a checksum MD5.
-    Author: Vitor Bueno de Camargo
+    Author: Vitor Bueno de Camargo, Gabriel David Sacca
     Created at: September, 14th. 2019
     Updated at: September, 16th. 2019
 */
