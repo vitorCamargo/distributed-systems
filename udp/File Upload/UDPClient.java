@@ -1,5 +1,5 @@
 /*
-    Description: This is the class of the UDP Server for files upload. The idea is for the server get the header first, n-packages for the file and a checksum MD5.
+    Description: This is the class of the UDP Client for files upload. The idea is for the client send the header (with the length and name of the file) first, n-packages for the file content and a checksum MD5.
     Author: Vitor Bueno de Camargo
     Created at: September, 14th. 2019
     Updated at: September, 16th. 2019
