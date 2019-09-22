@@ -59,7 +59,7 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
         getContentPane().setLayout(new java.awt.BorderLayout(3, 1));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("mIRC Simplificado");
+        setTitle("mIRC Vitor & Gabriel");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -206,15 +206,15 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             Properties prop = new Properties();
             prop.put("multicastIP", InetAddress.getByName(txtIP.getText()));
             prop.put("multicastPort", Integer.parseInt(txtPorta.getText()));
-            prop.put("udpPort", 9967);
+            prop.put("udpPort", 6799);
             prop.put("nickname", this.getApelido());
             prop.put("UI", this);
             
             protoController = new ProtocolController(prop);
             listener = new Listener(protoController);
+            listener.run();
             
-            Message messageInitial = new Message((byte) 1, this.getApelido(), "");
-            protoController.send("Todos", messageInitial);
+            protoController.join();
 
         } catch(UnknownHostException uhe) {
             JOptionPane.showMessageDialog(this,
@@ -225,13 +225,13 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
         }
     }
 
-    private void btnDesconectarActionPerformed(java.awt.event.ActionEvent evt) {try {
-        if (protoController != null) {
-            protoController.leave();
-            protoController.close();
-            protoController = null;
-        } 
-        
+    private void btnDesconectarActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            if(protoController != null) {
+                protoController.leave();
+                protoController.close();
+                protoController = null;
+            } 
         } catch (IOException ioe) {
             JOptionPane.showMessageDialog(this, ioe.getMessage(),
                 "Erro ao sair do grupo.", JOptionPane.ERROR_MESSAGE);
@@ -255,6 +255,13 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             this.writeLocalMessage(this.getApelido(), msg);
             txtMensagem.setText("");
             txtMensagem.requestFocus();
+
+            try {
+                protoController.send(nickTarget, msg);
+            } catch(IOException ioe) {
+                JOptionPane.showMessageDialog(this,
+                    ioe.getMessage(), "Erro de I/O.",JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
@@ -266,8 +273,6 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
         try {
             styledDoc.insertString(styledDoc.getLength(), "<" + id + "> ", greenStyle);
             styledDoc.insertString(styledDoc.getLength(), mensagem + "\n", blackStyle);
-
-            areaMensagem.setCaretPosition(areaMensagem.getText().length());
         } catch(BadLocationException ble) {
             System.err.println("Erro ao escrever mensagem na UI" + ble);
         }
@@ -277,8 +282,6 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
         try {
             styledDoc.insertString(styledDoc.getLength(), "<" + id + "> ", blueStyle);
             styledDoc.insertString(styledDoc.getLength(), mensagem + "\n", blackStyle);
-
-            areaMensagem.setCaretPosition(areaMensagem.getText().length());
         } catch(BadLocationException ble) {
             System.err.println("Erro ao escrever mensagem na UI" + ble);
         }
@@ -298,7 +301,7 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
     
     @Override
     public void update(Message m) {
-        switch (m.getType()) {
+        switch(m.getType()) {
             case 1:
                 this.addNickname(m.getSource());
                 break;
