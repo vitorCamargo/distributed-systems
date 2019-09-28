@@ -75,7 +75,7 @@ public class ProtocolController {
     }
 
     public void join() throws IOException {
-        Message messageInitial = new Message((byte) 1, this.nick, "");
+        Message messageInitial = new Message((byte) 1, this.nick, " ");
         this.sendMessageGroup(messageInitial);
     }
 
@@ -116,9 +116,8 @@ public class ProtocolController {
             } else if(msg.getType() == 5) {
                 this.onlineUsers.remove(msg.getSource());
             }
-        }
-
             this.ui.update(msg);
+        }
     }
 
     public void receiveUdpPacket() throws IOException {
