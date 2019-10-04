@@ -66,11 +66,11 @@ class matriculaServicer(matricula_pb2_grpc.MatriculaServiceServicer):
         VALUES (?,?,?,?,?,?)
         """, lista)
         conn.commit()
-        print("inserido com sucesso");
-        return matricula_pb2.Mess(mess = 'inserido com sucesso');
+        print("inserido com sucesso")
+        return matricula_pb2.Mess(mess = 'inserido com sucesso')
 
     def atualizaNota(self, request, context):
-        lista = (float(request[2]), int(request[3]), request[4], int(request[5]), int(request[6].split("\"")[0]))
+        lista = (request.Nota, request.RA, request.cod_disciplina, request.ano, request.semestre)
         cursor.execute("""
         UPDATE Matricula
         SET nota = ?
@@ -78,26 +78,25 @@ class matriculaServicer(matricula_pb2_grpc.MatriculaServiceServicer):
         """, lista)
         conn.commit()
 
-        connection.send(b'atualizado com sucesso');
+        return matricula_pb2.Mess(mess = 'inserido com sucesso')
 
     def removeNota(self, request, context):
         cursor.execute("""
         DELETE FROM Matricula
         WHERE RA = ? and cod_disciplina = ? and ano = ? and semestre = ?
-        """, (int(request[2]), request[3], int(request[4]), int(request[5].split("\"")[0])))
-        conn.commit()
+        """, (request.RA, request.cod_disciplina, request.ano, request.semestre))
 
-        connection.send(b'deletado com sucesso');
+        return matricula_pb2.Mess(mess = 'inserido com sucesso')
 
     def consultaNota(self, request, context):
-        lista = (int(request[2].split("\"")[0]),)
+        lista = (request.RA,)
 
         cursor.execute("""
         SELECT m.cod_disciplina, d.nome, m.nota, m.faltas FROM Disciplina d, Matricula m 
         WHERE m.RA = ? and m.cod_disciplina = d.codigo
         """, lista)
 
-        records = cursor.fetchall();
+        records = cursor.fetchall()
         
         valor = ''
         for row in records:
@@ -106,17 +105,17 @@ class matriculaServicer(matricula_pb2_grpc.MatriculaServiceServicer):
             valor = valor + '\n'
 
 
-        connection.send(bytes(valor, 'utf-8'));
+        return matricula_pb2.Mess(mess = valor)
 
     def consultaFalta(self, request, context):
-        lista = (request[2], int(request[3]), int(request[4].split("\"")[0]))
+        lista = (request.cod_disciplina, request.ano, request.semestre)
 
         cursor.execute("""
         SELECT m.RA, a.nome, m.nota, m.faltas FROM Aluno a, Matricula m 
         WHERE m.cod_disciplina = ? and m.ano = ? and m.semestre = ? and a.RA = m.RA
         """, lista)
 
-        records = cursor.fetchall();
+        records = cursor.fetchall()
         
         valor = ''
         for row in records:
@@ -124,18 +123,17 @@ class matriculaServicer(matricula_pb2_grpc.MatriculaServiceServicer):
                 valor = valor + str(value) + ', '
             valor = valor + '\n'
 
-
-        connection.send(bytes(valor, 'utf-8'));
+        return matricula_pb2.Mess(mess = valor)
 
     def consultaAluno(self, request, context):
-        lista = (request[2], int(request[3]), int(request[4].split("\"")[0]))
+        lista = (request.cod_disciplina, request.ano, request.semestre)
 
         cursor.execute("""
         SELECT m.RA, a.nome, a.periodo FROM Aluno a, Matricula m 
         WHERE m.cod_disciplina = ? and m.ano = ? and m.semestre = ? and a.RA = m.RA
         """, lista)
 
-        records = cursor.fetchall();
+        records = cursor.fetchall()
         
         valor = ''
         for row in records:
@@ -143,17 +141,14 @@ class matriculaServicer(matricula_pb2_grpc.MatriculaServiceServicer):
                 valor = valor + str(value) + ', '
             valor = valor + '\n'
 
-
-        connection.send(bytes(valor, 'utf-8'));
+        return matricula_pb2.Mess(mess = valor)
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     matricula_pb2_grpc.add_MatriculaServiceServicer_to_server(
         matriculaServicer(), server)
-    server.add_insecure_port('[::]:50051')
-    print("antes")
+    server.add_insecure_port('127.0.0.1:50051')
     server.start()
-    print("depois")
     server.wait_for_termination()
 
 if __name__ == '__main__':
