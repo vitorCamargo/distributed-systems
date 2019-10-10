@@ -1,56 +1,18 @@
+# Description: This is the Python Class to RMI Project, it's the functions used in client.
+# Author: Gabriel David Sacca, Vitor Bueno de Camargo
+# Created at: October, 09th. 2019
+# Updated at: October, 09th. 2019
+
 import Pyro4
 import sqlite3
-
-conn = sqlite3.connect('Notas.db')
-cursor = conn.cursor()
-
-# lendo os dados
-cursor.execute("""
-create table if not exists Curso (
-    codigo INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome varchar(100)
-);
-""")
-
-cursor.execute("""
-create table if not exists Aluno (
-    RA INTEGER PRIMARY KEY,
-    nome varchar(100),
-    periodo INTEGER,
-    cod_curso INTEGER,
-    foreign key(cod_curso) references Curso(codigo)
-);
-""")
-
-cursor.execute("""
-create table if not exists Disciplina (
-    codigo varchar(100) PRIMARY KEY,
-    nome varchar(100),
-    professor varchar(100),
-    cod_curso INTEGER,
-    foreign key(cod_curso) references Curso(codigo)
-);
-""")
-
-cursor.execute("""
-create table if not exists Matricula (
-    RA INTEGER,
-    cod_disciplina varchar(100),
-    ano INTEGER,
-    semestre INTEGER,
-    nota float,
-    faltas INTEGER,
-    foreign key(RA) references Aluno(RA),
-    foreign key(cod_disciplina) references Disciplina(codigo),
-    PRIMARY KEY(RA, cod_disciplina, ano, semestre)
-
-);
-""")
 
 @Pyro4.expose
 class Notas:
     def cadastraNota(self, ra, cod_disciplina, ano, semestre, nota, faltas):
-        lista = [(ra, cod_disciplina, ano, semestre, nota, faltas)]
+        conn = sqlite3.connect('Notas.db')
+        cursor = conn.cursor()
+
+        lista = [(int(ra), cod_disciplina, int(ano), int(semestre), float(nota), int(faltas))]
         cursor.executemany("""
         INSERT INTO Matricula (RA, cod_disciplina, ano, semestre, nota, faltas)
         VALUES (?,?,?,?,?,?)
@@ -61,6 +23,9 @@ class Notas:
         return "inserido com sucesso"
 
     def atualizaNota(self, nota, ra, cod_disciplina, ano, semestre):
+        conn = sqlite3.connect('Notas.db')
+        cursor = conn.cursor()
+
         lista = (nota, ra, cod_disciplina, ano, semestre)
         cursor.execute("""
         UPDATE Matricula
@@ -73,6 +38,9 @@ class Notas:
         return "atualizado com sucesso"
 
     def removeNota(self, ra, cod_disciplina, ano, semestre):
+        conn = sqlite3.connect('Notas.db')
+        cursor = conn.cursor()
+
         cursor.execute("""
         DELETE FROM Matricula
         WHERE RA = ? and cod_disciplina = ? and ano = ? and semestre = ?
@@ -83,6 +51,9 @@ class Notas:
         return "removido com sucesso"
 
     def consultaNota(self, ra):
+        conn = sqlite3.connect('Notas.db')
+        cursor = conn.cursor()
+
         lista = (ra,)
 
         cursor.execute("""
@@ -91,17 +62,19 @@ class Notas:
         """, lista)
 
         records = cursor.fetchall()
-        
+
         valor = ''
         for row in records:
             for value in row:
                 valor = valor + str(value) + ', '
             valor = valor + '\n'
 
-
         return valor
 
     def consultaFalta(self, cod_disciplina, ano, semestre):
+        conn = sqlite3.connect('Notas.db')
+        cursor = conn.cursor()
+
         lista = (cod_disciplina, ano, semestre)
 
         cursor.execute("""
@@ -110,7 +83,7 @@ class Notas:
         """, lista)
 
         records = cursor.fetchall()
-        
+
         valor = ''
         for row in records:
             for value in row:
@@ -120,6 +93,9 @@ class Notas:
         return valor
 
     def consultaAluno(self, cod_disciplina, ano, semestre):
+        conn = sqlite3.connect('Notas.db')
+        cursor = conn.cursor()
+
         lista = (cod_disciplina, ano, semestre)
 
         cursor.execute("""
@@ -128,7 +104,7 @@ class Notas:
         """, lista)
 
         records = cursor.fetchall()
-        
+
         valor = ''
         for row in records:
             for value in row:

@@ -1,10 +1,15 @@
+# Description: This is the Python Server to RMI Project.
+# Author: Gabriel David Sacca, Vitor Bueno de Camargo
+# Created at: October, 09th. 2019
+# Updated at: October, 09th. 2019
+
 import Pyro4
 from Notas import Notas
 
-daemon = Pyro4.Daemon()                  # executa o Daemon do Pyro4
-ns = Pyro4.locateNS()                    # localiza o servidor de nomes
-uri = daemon.register(Notas)       # registra Calculadora como um objeto Pyro
-ns.register("NotasService", uri)   # registra o ojbeto com  um servidor de nomes
+daemon = Pyro4.Daemon()
+ns = Pyro4.locateNS()
+uri = daemon.register(Notas)
+ns.register("NotasService", uri)
 
 print("Objeto registrado.")
-daemon.requestLoop()                     # servidor aguardando solicitações
+daemon.requestLoop()
