@@ -1,3 +1,9 @@
+# Description: This is a Classifier Code, he is responsible for capturing information passed by the 
+# collector and relaying it to subscribers who wish that subject.
+# Author: Vitor Bueno de Camargo, Gabriel David Sacca
+# Created at: October, 25th. 2019
+# Updated at: October, 30th. 2019
+
 import pika
 import json
 

@@ -1,3 +1,9 @@
+# Description: This is a Subscriber Code, they are the users who will receive the information
+# passed by the collector, ie the tweets they are interested in.
+# Author: Vitor Bueno de Camargo, Gabriel David Sacca
+# Created at: October, 25th. 2019
+# Updated at: October, 30th. 2019
+
 import pika
 import sys
 import json
